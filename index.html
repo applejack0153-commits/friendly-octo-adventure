@@ -2,58 +2,95 @@
 <html lang="uk">
 <head>
     <meta charset="UTF-8">
-    <title>Аналітичний Термінал</title>
+    <title>Crypto Terminal Pro</title>
     <style>
         body { font-family: 'Segoe UI', sans-serif; background: #0d1117; color: #c9d1d9; margin: 20px; }
         .grid { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
         .block { background: #161b22; padding: 15px; border-radius: 10px; border: 1px solid #30363d; margin-bottom: 20px; }
-        h2 { color: #58a6ff; border-bottom: 1px solid #30363d; padding-bottom: 10px; margin-top: 0; }
-        .news-item { border-bottom: 1px dashed #30363d; padding: 8px 0; font-size: 14px; }
+        h2 { color: #58a6ff; border-bottom: 1px solid #30363d; padding-bottom: 10px; margin-top: 0; font-size: 18px; }
+        input { background: #0d1117; border: 1px solid #30363d; color: white; padding: 5px; border-radius: 5px; width: 80px; }
+        #timer { font-size: 24px; color: #f0883e; font-weight: bold; text-align: center; }
+        .portfolio-row { margin: 10px 0; display: flex; justify-content: space-between; }
     </style>
 </head>
 <body>
 
-    <h1 style="color: #f0883e;">📊 Мій Аналітичний Термінал</h1>
+    <h1 style="color: #f0883e; text-align: center;">🚀 Мій Аналітичний Термінал v2.0</h1>
 
     <div class="grid">
-        <div class="block">
-            <h2>Ринок BTC/USDT (Live)</h2>
-            <div style="height:450px;">
-                <div id="tradingview_chart"></div>
-                <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
-                <script type="text/javascript">
-                new TradingView.widget({
-                  "autosize": true, "symbol": "BINANCE:BTCUSDT", "interval": "H", "timezone": "Europe/Kyiv",
-                  "theme": "dark", "style": "1", "locale": "uk", "container_id": "tradingview_chart"
-                });
-                </script>
+        <div>
+            <div class="block">
+                <h2>Ринок BTC/USDT (Live)</h2>
+                <div style="height:450px;">
+                    <div id="tradingview_chart"></div>
+                    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+                    <script type="text/javascript">
+                    new TradingView.widget({
+                      "autosize": true, "symbol": "BINANCE:BTCUSDT", "interval": "H", "theme": "dark", "style": "1", "locale": "uk", "container_id": "tradingview_chart"
+                    });
+                    </script>
+                </div>
+            </div>
+
+            <div class="block">
+                <h2>Світові новини (Reuters, Bloomberg)</h2>
+                <div style="height: 400px;">
+                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-timeline.js" async>
+                    {"feedMode": "all_symbols","colorTheme": "dark","width": "100%","height": "100%","locale": "uk"}
+                    </script>
+                </div>
             </div>
         </div>
 
-        <div class="block">
-            <h2>Технічний аналіз</h2>
-            <div style="height:450px;">
-                <iframe src="https://ru.widgets.investing.com/live-currency-cross-rates?theme=darkTheme&pairs=1,2,3,4,5,7,8,9,10" width="100%" height="100%" frameborder="0" allowtransparency="true" marginwidth="0" marginheight="0"></iframe>
-            </div>
-        </div>
-    </div>
-
-    <div class="block">
-        <h2>Світові фінансові новини (Reuters, Bloomberg, ФРС)</h2>
-        <div style="height: 500px;">
-            <div class="tradingview-widget-container">
-                <div class="tradingview-widget-container__widget"></div>
-                <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-timeline.js" async>
-                {
-                "feedMode": "all_symbols",
-                "colorTheme": "dark",
-                "isTransparent": false,
-                "displayMode": "regular",
-                "width": "100%",
-                "height": "100%",
-                "locale": "uk"
-                }
+        <div>
+            <div class="block">
+                <h2>До засідання ФРС (17 березня)</h2>
+                <div id="timer">Завантаження...</div>
+                <script>
+                    const countDownDate = new Date("March 17, 2026 21:00:00").getTime();
+                    setInterval(function() {
+                        const now = new Date().getTime();
+                        const distance = countDownDate - now;
+                        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                        document.getElementById("timer").innerHTML = days + "д " + hours + "г " + minutes + "хв ";
+                    }, 1000);
                 </script>
+            </div>
+
+            <div class="block">
+                <h2>Мій Портфель (USDT)</h2>
+                <div class="portfolio-row">
+                    <span>Купив по ($):</span>
+                    <input type="number" id="buyPrice" value="60000" oninput="calcProfit()">
+                </div>
+                <div class="portfolio-row">
+                    <span>Сума всього ($):</span>
+                    <input type="number" id="invested" value="100" oninput="calcProfit()">
+                </div>
+                <hr style="border-color: #30363d;">
+                <div id="profitResult" style="font-size: 20px; text-align: center; color: #3fb950;">Прибуток: $0.00</div>
+                <script>
+                    function calcProfit() {
+                        // Логіка калькулятора (поки що на основі фіксованої ціни, пізніше підключимо живу)
+                        let buy = document.getElementById('buyPrice').value;
+                        let inv = document.getElementById('invested').value;
+                        let current = 65000; // Це тимчасова ціна, ми її оновимо
+                        let profit = ((current - buy) / buy) * inv;
+                        document.getElementById('profitResult').innerHTML = "Прибуток: $" + profit.toFixed(2);
+                    }
+                </script>
+            </div>
+
+            <div class="block">
+                <h2>Індекс Страху та Жадібності</h2>
+                <img src="https://alternative.me/crypto/fear-and-greed-index.png" alt="Fear and Greed Index" style="width:100%; border-radius: 10px;">
+            </div>
+
+            <div class="block">
+                <h2>Технічні сигнали</h2>
+                <iframe src="https://ru.widgets.investing.com/live-currency-cross-rates?theme=darkTheme&pairs=1,2,3,4,5,7,8,9,10" width="100%" height="300" frameborder="0"></iframe>
             </div>
         </div>
     </div>
