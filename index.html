@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <link rel="icon" type="image/png" href="favicom.jpg">
     <title>Ultimate Analyst Terminal</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📈</text></svg>">
     <style>
         body { font-family: 'Segoe UI', sans-serif; background: #0d1117; color: #c9d1d9; margin: 20px; }
         .grid { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
@@ -17,16 +18,18 @@
         .drift { background: #8a2be2; }
         .robin { background: #00c805; color: black; }
         #timer { font-size: 20px; color: #f0883e; text-align: center; font-weight: bold; }
+        /* Стиль для чернеток */
+        #chat-box { height: 120px; background: #0d1117; border: 1px solid #30363d; border-radius: 5px; padding: 10px; overflow-y: auto; font-size: 13px; margin-bottom: 10px; }
     </style>
 </head>
 <body>
 
-    <h1 style="color: #f0883e; text-align: center;">🏛️ Crypto & Politics Terminal v4.5</h1>
+    <h1 style="color: #f0883e; text-align: center;">🏛️ Crypto & Politics Terminal v5.0</h1>
 
     <div class="grid">
         <div>
             <div class="block">
-                <h2>Аналіз Ринку</h2>
+                <h2>Аналіз Ринку (Обирай монету)</h2>
                 <div class="btn-group">
                     <button onclick="changeCoin('BINANCE:BTCUSDT')">BTC</button>
                     <button onclick="changeCoin('BINANCE:ETHUSDT')">ETH</button>
@@ -39,7 +42,7 @@
 
             <div class="block">
                 <h2>Світові Новини та Сигнали</h2>
-                <div style="height: 400px;">
+                <div style="height: 450px;">
                     <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-timeline.js" async>
                     {"feedMode": "all_symbols","colorTheme": "dark","width": "100%","height": "100%","locale": "uk"}
                     </script>
@@ -50,23 +53,29 @@
         <div>
             <div class="block">
                 <h2>🎯 Ринки Прогнозів</h2>
-                <a href="https://polymarket.com" target="_blank" class="prediction-link poly">Polymarket (Крипта/Політика)</a>
-                <a href="https://app.drift.trade/bet" target="_blank" class="prediction-link drift">Drift BET (Solana Predictions)</a>
-                <a href="https://robinhood.com/us/en/about/crypto/" target="_blank" class="prediction-link robin">Robinhood Predicts</a>
-                <a href="https://kalshi.com" target="_blank" class="prediction-link" style="background: #1f6feb;">Kalshi (Економіка США)</a>
-                <p style="font-size: 11px; color: #8b949e; margin-top: 10px;">*Знайшов цікаву ставку? Копіюй назву сюди і питай мене!</p>
+                <a href="https://polymarket.com" target="_blank" class="prediction-link poly">Polymarket</a>
+                <a href="https://app.drift.trade/bet" target="_blank" class="prediction-link drift">Drift BET</a>
+                <a href="https://robinhood.com" target="_blank" class="prediction-link robin">Robinhood Predicts</a>
+                <a href="https://kalshi.com" target="_blank" class="prediction-link" style="background: #1f6feb;">Kalshi</a>
+            </div>
+
+            <div class="block">
+                <h2>📝 Мої Чернетки / Замітки</h2>
+                <div id="chat-box">Тут можна зберігати ідеї для ставок або важливі ціни...</div>
+                <input type="text" id="chat-input" placeholder="Напиши щось..." style="width: 70%; background:#0d1117; color:white; border:1px solid #30363d; padding:5px;">
+                <button onclick="addNote()">Додати</button>
+            </div>
+
+            <div class="block">
+                <h2>Гаманець: BTC <span id="current-btc" style="color:#3fb950;">...</span></h2>
+                <input type="number" id="buyPrice" placeholder="Вхід $" oninput="saveAndCalc()" style="width:45%; background:#0d1117; color:white; border:1px solid #30363d; padding:5px;">
+                <input type="number" id="invested" placeholder="Сума $" oninput="saveAndCalc()" style="width:45%; background:#0d1117; color:white; border:1px solid #30363d; padding:5px;">
+                <div id="profitResult" style="margin-top:10px; font-size:18px; text-align:center; border-radius:5px; padding:8px; font-weight:bold;">$0.00</div>
             </div>
 
             <div class="block">
                 <h2>До рішення ФРС (17.03)</h2>
                 <div id="timer">Завантаження...</div>
-            </div>
-
-            <div class="block">
-                <h2>Портфель: BTC <span id="current-btc" style="color:#3fb950;">...</span></h2>
-                <input type="number" id="buyPrice" placeholder="Вхід $" oninput="saveAndCalc()" style="width:45%; background:#0d1117; color:white; border:1px solid #30363d; padding:5px;">
-                <input type="number" id="invested" placeholder="Сума $" oninput="saveAndCalc()" style="width:45%; background:#0d1117; color:white; border:1px solid #30363d; padding:5px;">
-                <div id="profitResult" style="margin-top:10px; font-size:18px; text-align:center; border-radius:5px; padding:8px; font-weight:bold;">$0.00</div>
             </div>
 
             <div class="block">
@@ -101,23 +110,34 @@
                 const data = await res.json();
                 const price = parseFloat(data.price);
                 document.getElementById('current-btc').innerText = price.toFixed(2);
-                
                 const buy = localStorage.getItem('myBuyPrice');
                 const inv = localStorage.getItem('myInvested');
                 if(buy && inv) {
                     const profit = ((price - buy) / buy) * inv;
                     const resDiv = document.getElementById('profitResult');
-                    resDiv.innerHTML = (profit>=0?"Прибуток: +":"Збиток: ") + "$" + profit.toFixed(2);
+                    resDiv.innerHTML = (profit>=0?"+":"") + "$" + profit.toFixed(2);
                     resDiv.style.background = profit>=0?"rgba(63,185,80,0.15)":"rgba(248,81,73,0.15)";
                     resDiv.style.color = profit>=0?"#3fb950":"#f85149";
                 }
             } catch(e) {}
         }
+
         function saveAndCalc() {
             localStorage.setItem('myBuyPrice', document.getElementById('buyPrice').value);
             localStorage.setItem('myInvested', document.getElementById('invested').value);
             updatePrice();
         }
+
+        function addNote() {
+            const inp = document.getElementById('chat-input');
+            const box = document.getElementById('chat-box');
+            if(inp.value) {
+                box.innerHTML += "<div>• " + inp.value + "</div>";
+                inp.value = "";
+                box.scrollTop = box.scrollHeight;
+            }
+        }
+
         window.onload = () => {
             document.getElementById('buyPrice').value = localStorage.getItem('myBuyPrice') || 60000;
             document.getElementById('invested').value = localStorage.getItem('myInvested') || 100;
