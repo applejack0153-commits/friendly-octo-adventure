@@ -2,23 +2,25 @@
 <html lang="uk">
 <head>
     <meta charset="UTF-8">
-    <title>Crypto & Prediction Terminal</title>
+    <title>Ultimate Analyst Terminal</title>
     <style>
         body { font-family: 'Segoe UI', sans-serif; background: #0d1117; color: #c9d1d9; margin: 20px; }
         .grid { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
         .block { background: #161b22; padding: 15px; border-radius: 10px; border: 1px solid #30363d; margin-bottom: 20px; }
         h2 { color: #58a6ff; border-bottom: 1px solid #30363d; padding-bottom: 10px; margin-top: 0; font-size: 18px; }
         .btn-group { margin-bottom: 10px; }
-        button { background: #21262d; color: #c9d1d9; border: 1px solid #30363d; padding: 8px 15px; cursor: pointer; border-radius: 5px; margin-right: 5px; }
+        button { background: #21262d; color: #c9d1d9; border: 1px solid #30363d; padding: 8px 12px; cursor: pointer; border-radius: 5px; margin-right: 5px; }
         button:hover { background: #30363d; }
-        .prediction-link { display: block; background: #238636; color: white; text-decoration: none; padding: 10px; border-radius: 5px; margin: 5px 0; text-align: center; font-weight: bold; }
-        .prediction-link:hover { background: #2ea043; }
+        .prediction-link { display: block; color: white; text-decoration: none; padding: 8px; border-radius: 5px; margin: 5px 0; text-align: center; font-weight: bold; font-size: 14px; }
+        .poly { background: #238636; }
+        .drift { background: #8a2be2; }
+        .robin { background: #00c805; color: black; }
         #timer { font-size: 20px; color: #f0883e; text-align: center; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <h1 style="color: #f0883e; text-align: center;">🏛️ Термінал Прогнозів та Аналітики v4.0</h1>
+    <h1 style="color: #f0883e; text-align: center;">🏛️ Crypto & Politics Terminal v4.5</h1>
 
     <div class="grid">
         <div>
@@ -35,7 +37,7 @@
             </div>
 
             <div class="block">
-                <h2>Світові Новини (Індикатори для ставок)</h2>
+                <h2>Світові Новини та Сигнали</h2>
                 <div style="height: 400px;">
                     <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-timeline.js" async>
                     {"feedMode": "all_symbols","colorTheme": "dark","width": "100%","height": "100%","locale": "uk"}
@@ -46,28 +48,28 @@
 
         <div>
             <div class="block">
-                <h2>🎯 Ринки Прогнозів (Ставки)</h2>
-                <p style="font-size: 12px;">Актуальні події для аналізу:</p>
-                <a href="https://polymarket.com/event/fed-interest-rates-march-meeting" target="_blank" class="prediction-link">ФРС: Чи знизять ставку?</a>
-                <a href="https://polymarket.com/event/bitcoin-price-end-of-march" target="_blank" class="prediction-link">BTC: Ціна на кінець березня</a>
-                <a href="https://kalshi.com/markets/fed" target="_blank" class="prediction-link" style="background: #1f6feb;">Kalshi: Економічні прогнози</a>
-                <p style="font-size: 11px; color: #8b949e;">*Перед ставкою скопіюй новину в чат і запитай мене!</p>
+                <h2>🎯 Ринки Прогнозів</h2>
+                <a href="https://polymarket.com" target="_blank" class="prediction-link poly">Polymarket (Крипта/Політика)</a>
+                <a href="https://app.drift.trade/bet" target="_blank" class="prediction-link drift">Drift BET (Solana Predictions)</a>
+                <a href="https://robinhood.com/us/en/about/crypto/" target="_blank" class="prediction-link robin">Robinhood Predicts</a>
+                <a href="https://kalshi.com" target="_blank" class="prediction-link" style="background: #1f6feb;">Kalshi (Економіка США)</a>
+                <p style="font-size: 11px; color: #8b949e; margin-top: 10px;">*Знайшов цікаву ставку? Копіюй назву сюди і питай мене!</p>
             </div>
 
             <div class="block">
-                <h2>До рішення ФРС</h2>
+                <h2>До рішення ФРС (17.03)</h2>
                 <div id="timer">Завантаження...</div>
             </div>
 
             <div class="block">
                 <h2>Портфель: BTC <span id="current-btc" style="color:#3fb950;">...</span></h2>
-                <input type="number" id="buyPrice" placeholder="Вхід $" oninput="saveAndCalc()" style="width:45%;">
-                <input type="number" id="invested" placeholder="Сума $" oninput="saveAndCalc()" style="width:45%;">
-                <div id="profitResult" style="margin-top:10px; font-size:18px; text-align:center; border-radius:5px; padding:5px;">$0.00</div>
+                <input type="number" id="buyPrice" placeholder="Вхід $" oninput="saveAndCalc()" style="width:45%; background:#0d1117; color:white; border:1px solid #30363d; padding:5px;">
+                <input type="number" id="invested" placeholder="Сума $" oninput="saveAndCalc()" style="width:45%; background:#0d1117; color:white; border:1px solid #30363d; padding:5px;">
+                <div id="profitResult" style="margin-top:10px; font-size:18px; text-align:center; border-radius:5px; padding:8px; font-weight:bold;">$0.00</div>
             </div>
 
             <div class="block">
-                <h2>Емоції Ринку</h2>
+                <h2>Fear & Greed Index</h2>
                 <img src="https://alternative.me/crypto/fear-and-greed-index.png" style="width:100%; border-radius: 10px;">
             </div>
         </div>
@@ -75,12 +77,9 @@
 
     <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
     <script>
-        // ЛОГІКА ГРАФІКА
         let currentSymbol = "BINANCE:BTCUSDT";
         function renderChart(symbol) {
-            new TradingView.widget({
-                "autosize": true, "symbol": symbol, "interval": "H", "theme": "dark", "style": "1", "locale": "uk", "container_id": "chart_container"
-            });
+            new TradingView.widget({ "autosize": true, "symbol": symbol, "interval": "H", "theme": "dark", "style": "1", "locale": "uk", "container_id": "chart_container" });
         }
         function changeCoin(symbol) {
             currentSymbol = symbol;
@@ -88,7 +87,6 @@
         }
         renderChart(currentSymbol);
 
-        // ТАЙМЕР
         const fedDate = new Date("March 17, 2026 21:00:00").getTime();
         setInterval(() => {
             const now = new Date().getTime();
@@ -96,7 +94,6 @@
             document.getElementById("timer").innerHTML = Math.floor(d/(1000*60*60*24))+"д "+Math.floor((d%(1000*60*60*24))/(1000*60*60))+"г "+Math.floor((d%(1000*60*60))/(1000*60))+"хв";
         }, 1000);
 
-        // ЦІНА ТА ПОРТФЕЛЬ
         async function updatePrice() {
             try {
                 const res = await fetch('https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT');
@@ -109,8 +106,8 @@
                 if(buy && inv) {
                     const profit = ((price - buy) / buy) * inv;
                     const resDiv = document.getElementById('profitResult');
-                    resDiv.innerHTML = (profit>=0?"+":"") + "$" + profit.toFixed(2);
-                    resDiv.style.background = profit>=0?"rgba(63,185,80,0.2)":"rgba(248,81,73,0.2)";
+                    resDiv.innerHTML = (profit>=0?"Прибуток: +":"Збиток: ") + "$" + profit.toFixed(2);
+                    resDiv.style.background = profit>=0?"rgba(63,185,80,0.15)":"rgba(248,81,73,0.15)";
                     resDiv.style.color = profit>=0?"#3fb950":"#f85149";
                 }
             } catch(e) {}
