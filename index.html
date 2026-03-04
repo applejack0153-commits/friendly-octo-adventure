@@ -2,39 +2,41 @@
 <html lang="uk">
 <head>
     <meta charset="UTF-8">
-    <title>Crypto Terminal Ultimate</title>
+    <title>Crypto & Prediction Terminal</title>
     <style>
         body { font-family: 'Segoe UI', sans-serif; background: #0d1117; color: #c9d1d9; margin: 20px; }
         .grid { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
         .block { background: #161b22; padding: 15px; border-radius: 10px; border: 1px solid #30363d; margin-bottom: 20px; }
-        h2 { color: #58a6ff; border-bottom: 1px solid #30363d; padding-bottom: 10px; margin-top: 0; }
-        input { background: #0d1117; border: 1px solid #30363d; color: white; padding: 8px; border-radius: 5px; width: 100px; }
+        h2 { color: #58a6ff; border-bottom: 1px solid #30363d; padding-bottom: 10px; margin-top: 0; font-size: 18px; }
+        .btn-group { margin-bottom: 10px; }
+        button { background: #21262d; color: #c9d1d9; border: 1px solid #30363d; padding: 8px 15px; cursor: pointer; border-radius: 5px; margin-right: 5px; }
+        button:hover { background: #30363d; }
+        .prediction-link { display: block; background: #238636; color: white; text-decoration: none; padding: 10px; border-radius: 5px; margin: 5px 0; text-align: center; font-weight: bold; }
+        .prediction-link:hover { background: #2ea043; }
         #timer { font-size: 20px; color: #f0883e; text-align: center; font-weight: bold; }
-        .price-live { font-size: 22px; color: #3fb950; text-align: center; margin: 10px 0; }
-        /* Стиль для чату */
-        #chat-box { height: 150px; background: #0d1117; border: 1px solid #30363d; border-radius: 5px; padding: 10px; overflow-y: auto; font-size: 13px; margin-bottom: 10px; }
     </style>
 </head>
 <body>
 
-    <h1 style="color: #f0883e; text-align: center;">🛡️ Мій Аналітичний Термінал v3.0</h1>
+    <h1 style="color: #f0883e; text-align: center;">🏛️ Термінал Прогнозів та Аналітики v4.0</h1>
 
     <div class="grid">
         <div>
             <div class="block">
-                <h2>Ринок BTC/USDT (Live)</h2>
-                <div style="height:450px;">
-                    <div id="tradingview_chart"></div>
-                    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
-                    <script type="text/javascript">
-                    new TradingView.widget({"autosize": true, "symbol": "BINANCE:BTCUSDT", "interval": "H", "theme": "dark", "style": "1", "locale": "uk", "container_id": "tradingview_chart"});
-                    </script>
+                <h2>Аналіз Ринку</h2>
+                <div class="btn-group">
+                    <button onclick="changeCoin('BINANCE:BTCUSDT')">BTC</button>
+                    <button onclick="changeCoin('BINANCE:ETHUSDT')">ETH</button>
+                    <button onclick="changeCoin('BINANCE:SOLUSDT')">SOL</button>
+                    <button onclick="changeCoin('BINANCE:XRPUSDT')">XRP</button>
+                    <button onclick="changeCoin('BINANCE:BNBUSDT')">BNB</button>
                 </div>
+                <div style="height:450px;" id="chart_container"></div>
             </div>
 
             <div class="block">
-                <h2>Світові новини (Live Feed)</h2>
-                <div style="height: 450px;">
+                <h2>Світові Новини (Індикатори для ставок)</h2>
+                <div style="height: 400px;">
                     <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-timeline.js" async>
                     {"feedMode": "all_symbols","colorTheme": "dark","width": "100%","height": "100%","locale": "uk"}
                     </script>
@@ -44,94 +46,86 @@
 
         <div>
             <div class="block">
-                <h2>До засідання ФРС (17 березня)</h2>
-                <div id="timer">Рахую...</div>
+                <h2>🎯 Ринки Прогнозів (Ставки)</h2>
+                <p style="font-size: 12px;">Актуальні події для аналізу:</p>
+                <a href="https://polymarket.com/event/fed-interest-rates-march-meeting" target="_blank" class="prediction-link">ФРС: Чи знизять ставку?</a>
+                <a href="https://polymarket.com/event/bitcoin-price-end-of-march" target="_blank" class="prediction-link">BTC: Ціна на кінець березня</a>
+                <a href="https://kalshi.com/markets/fed" target="_blank" class="prediction-link" style="background: #1f6feb;">Kalshi: Економічні прогнози</a>
+                <p style="font-size: 11px; color: #8b949e;">*Перед ставкою скопіюй новину в чат і запитай мене!</p>
             </div>
 
             <div class="block">
-                <h2>Мій Розумний Портфель</h2>
-                <div class="price-live">BTC: <span id="current-price">Завантаження...</span>$</div>
-                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                    <span>Вхід ($):</span>
-                    <input type="number" id="buyPrice" oninput="saveAndCalc()">
-                </div>
-                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                    <span>Сума ($):</span>
-                    <input type="number" id="invested" oninput="saveAndCalc()">
-                </div>
-                <div id="profitResult" style="font-size: 20px; text-align: center; font-weight: bold; padding: 10px; border-radius: 5px;">$0.00</div>
+                <h2>До рішення ФРС</h2>
+                <div id="timer">Завантаження...</div>
             </div>
 
             <div class="block">
-                <h2>Консультація з AI</h2>
-                <div id="chat-box">Привіт! Скопіюй сюди новину, яка тебе турбує, а потім запитай мене в основному чаті Gemini про неї. Я допоможу розібратися!</div>
-                <input type="text" id="chat-input" placeholder="Твоя замітка..." style="width: 80%;">
-                <button onclick="addNote()" style="padding: 8px; border-radius: 5px; cursor: pointer;">ОК</button>
+                <h2>Портфель: BTC <span id="current-btc" style="color:#3fb950;">...</span></h2>
+                <input type="number" id="buyPrice" placeholder="Вхід $" oninput="saveAndCalc()" style="width:45%;">
+                <input type="number" id="invested" placeholder="Сума $" oninput="saveAndCalc()" style="width:45%;">
+                <div id="profitResult" style="margin-top:10px; font-size:18px; text-align:center; border-radius:5px; padding:5px;">$0.00</div>
             </div>
 
-            <div class="block" style="text-align: center;">
-                <h2>Страх та Жадібність</h2>
+            <div class="block">
+                <h2>Емоції Ринку</h2>
                 <img src="https://alternative.me/crypto/fear-and-greed-index.png" style="width:100%; border-radius: 10px;">
             </div>
         </div>
     </div>
 
+    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
     <script>
-        // 1. ЛОГІКА ТАЙМЕРА
+        // ЛОГІКА ГРАФІКА
+        let currentSymbol = "BINANCE:BTCUSDT";
+        function renderChart(symbol) {
+            new TradingView.widget({
+                "autosize": true, "symbol": symbol, "interval": "H", "theme": "dark", "style": "1", "locale": "uk", "container_id": "chart_container"
+            });
+        }
+        function changeCoin(symbol) {
+            currentSymbol = symbol;
+            renderChart(symbol);
+        }
+        renderChart(currentSymbol);
+
+        // ТАЙМЕР
         const fedDate = new Date("March 17, 2026 21:00:00").getTime();
         setInterval(() => {
             const now = new Date().getTime();
             const d = fedDate - now;
-            document.getElementById("timer").innerHTML = Math.floor(d/(1000*60*60*24)) + "д " + Math.floor((d%(1000*60*60*24))/(1000*60*60)) + "г " + Math.floor((d%(1000*60*60))/(1000*60)) + "хв";
+            document.getElementById("timer").innerHTML = Math.floor(d/(1000*60*60*24))+"д "+Math.floor((d%(1000*60*60*24))/(1000*60*60))+"г "+Math.floor((d%(1000*60*60))/(1000*60))+"хв";
         }, 1000);
 
-        // 2. ЖИВА ЦІНА ТА ПОРТФЕЛЬ
-        let currentBtcPrice = 0;
-
-        async function getPrice() {
+        // ЦІНА ТА ПОРТФЕЛЬ
+        async function updatePrice() {
             try {
-                const response = await fetch('https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT');
-                const data = await response.json();
-                currentBtcPrice = parseFloat(data.price);
-                document.getElementById('current-price').innerText = currentBtcPrice.toFixed(2);
-                saveAndCalc();
-            } catch (e) { console.log("Помилка ціни"); }
+                const res = await fetch('https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT');
+                const data = await res.json();
+                const price = parseFloat(data.price);
+                document.getElementById('current-btc').innerText = price.toFixed(2);
+                
+                const buy = localStorage.getItem('myBuyPrice');
+                const inv = localStorage.getItem('myInvested');
+                if(buy && inv) {
+                    const profit = ((price - buy) / buy) * inv;
+                    const resDiv = document.getElementById('profitResult');
+                    resDiv.innerHTML = (profit>=0?"+":"") + "$" + profit.toFixed(2);
+                    resDiv.style.background = profit>=0?"rgba(63,185,80,0.2)":"rgba(248,81,73,0.2)";
+                    resDiv.style.color = profit>=0?"#3fb950":"#f85149";
+                }
+            } catch(e) {}
         }
-
         function saveAndCalc() {
-            const buy = document.getElementById('buyPrice').value;
-            const inv = document.getElementById('invested').value;
-            
-            // Зберігаємо в пам'ять браузера
-            localStorage.setItem('myBuyPrice', buy);
-            localStorage.setItem('myInvested', inv);
-
-            if (buy > 0 && currentBtcPrice > 0) {
-                const profit = ((currentBtcPrice - buy) / buy) * inv;
-                const res = document.getElementById('profitResult');
-                res.innerHTML = (profit >= 0 ? "+" : "") + "$" + profit.toFixed(2);
-                res.style.color = profit >= 0 ? "#3fb950" : "#f85149";
-                res.style.background = profit >= 0 ? "rgba(63, 185, 80, 0.1)" : "rgba(248, 81, 73, 0.1)";
-            }
+            localStorage.setItem('myBuyPrice', document.getElementById('buyPrice').value);
+            localStorage.setItem('myInvested', document.getElementById('invested').value);
+            updatePrice();
         }
-
-        // Завантаження збережених даних
         window.onload = () => {
             document.getElementById('buyPrice').value = localStorage.getItem('myBuyPrice') || 60000;
             document.getElementById('invested').value = localStorage.getItem('myInvested') || 100;
-            getPrice();
-            setInterval(getPrice, 5000); // Оновлення ціни кожні 5 сек
+            updatePrice();
+            setInterval(updatePrice, 5000);
         };
-
-        function addNote() {
-            const inp = document.getElementById('chat-input');
-            const box = document.getElementById('chat-box');
-            if(inp.value) {
-                box.innerHTML += "<div><b>Я:</b> " + inp.value + "</div>";
-                inp.value = "";
-                box.scrollTop = box.scrollHeight;
-            }
-        }
     </script>
 </body>
 </html>
